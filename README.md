@@ -64,7 +64,7 @@ To distribute your library please refer to the [Library Guidelines](https://gith
 
 ## Source code
 
-If you want to share your library's source code, we recommend using an online repository available for free at [Google Code] (http://code.google.com) or [GitHub](https://github.com/).
+If you want to share your library's source code, we recommend using an online repository available for free at [GitHub](https://github.com/).
 
 ## <a name='AddingJARs'/>Adding core.jar and other .jar files to your classpath</a>
 
