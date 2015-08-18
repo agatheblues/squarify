@@ -78,7 +78,7 @@
 	
 	<target name="init"> 
 		<echo>${line}
-    Building the Processing library ${project.name} ${library.version}
+    Building the Processing Library ${project.name} ${library.version}
 ${line}
 	src path        ${project.src}
 	bin path        ${project.bin}
@@ -209,8 +209,8 @@ ${line}
 	
 	
 	<target name="generate.javadoc" if="is.normal">
-	  	<!-- create the java reference of the library -->
-		<javadoc bottom="Processing library ${project.name} by ${author.name}. ${library.copyright}" 
+	  	<!-- create the java reference of the Library -->
+		<javadoc bottom="Processing Library ${project.name} by ${author.name}. ${library.copyright}" 
 				classpath="${classpath.local.location}/core.jar;{project.bin}" 
 				destdir="${project.tmp}/${project.name}/reference" 
 				verbose="false" 
@@ -300,7 +300,7 @@ ${line}
 	
 	
 	<target name="generate.zip" if="is.normal">
-		<!-- zip the distribution of the library -->
+		<!-- zip the distribution of the Library -->
 		
 		<move todir="${project.dist.version}/tmp/${project.name}">
   			<fileset dir="${project.dist.version}/${project.name}" />
