@@ -29,7 +29,7 @@ public class HelloLibrary {
 	 * initialize and start the Library.
 	 * 
 	 * @example Hello
-	 * @param theParent
+	 * @param theParent the parent PApplet
 	 */
 	public HelloLibrary(PApplet theParent) {
 		myParent = theParent;
@@ -56,10 +56,8 @@ public class HelloLibrary {
 
 	/**
 	 * 
-	 * @param theA
-	 *          the width of test
-	 * @param theB
-	 *          the height of test
+	 * @param theA the width of test
+	 * @param theB the height of test
 	 */
 	public void setVariable(int theA, int theB) {
 		myVariable = theA + theB;

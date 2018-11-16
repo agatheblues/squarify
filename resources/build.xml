@@ -373,7 +373,6 @@ ${line}
 		<delete dir="${project.bin}"/>
 		<delete dir="${project.tmp}"/>
 		<echo>
-		
 ${line}
 Name        ${project.name} 
 Version     ${library.prettyVersion} (${library.version})
