@@ -6,18 +6,20 @@ package squarify.library;
  * @author agathelenclen
  *
  */
-public class SquarifiedRect {
+public class SquarifyRect {
 	private float x, y, dx, dy, value;
+	private int id;
 
-	public SquarifiedRect(float x, float y, float dx, float dy, float value) {
+	public SquarifyRect(float x, float y, float dx, float dy, int id, float value) {
 		this.x = x;
 		this.y = y;
 		this.dx = dx;
 		this.dy = dy;
+		this.id = id;
 		this.value = value;
 	}
 	
-	public SquarifiedRect(float x, float y, float dx, float dy) {
+	public SquarifyRect(float x, float y, float dx, float dy) {
 		this.x = x;
 		this.y = y;
 		this.dx = dx;
@@ -43,5 +45,9 @@ public class SquarifiedRect {
 	
 	public float getValue() {
 		return value;
+	}
+
+	public int getId() {
+		return id;
 	}
 }

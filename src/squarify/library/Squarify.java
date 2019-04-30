@@ -1,8 +1,9 @@
 package squarify.library;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import squarify.library.SquarifyData.DataPoint;
 
 /**
  * A class to generate a squarified treemap layout from a set of values.
@@ -13,82 +14,31 @@ import java.util.List;
 
 public class Squarify {
 	
-	private ArrayList<SquarifiedRect> rects;
-	private ArrayList<Float> sizes;
-	private float width, height;
+	private ArrayList<SquarifyRect> rects;
+	private SquarifyData data;
 	
 	public Squarify(ArrayList<Float> sizes, float x, float y, float width, float height) {
-		this.width = width;
-		this.height = height;
-		this.sizes = this.sortDescending(sizes);
-		
-		List<Float> values = this.normalizeSizes(this.sizes, width, height);
-		rects = squarify(values, x, y, width, height);
+		data = new SquarifyData(sizes, width, height);
+		rects = squarify(data.getDataPoints(), x, y, width, height);
 	}
 	
 	/**
 	 * Getter for the list of rectangle's geometry
 	 * @return rects
 	 */
-	public ArrayList<SquarifiedRect> getRects() {
+	public ArrayList<SquarifyRect> getRects() {
 		return this.rects;
 	}
-	
-	/**
-	 * Helper that sorts a list in descending order
-	 * @param s A list of values
-	 * @return The list of values ordered descending
-	 */
-	private ArrayList<Float> sortDescending(ArrayList<Float> s) {
-		Collections.sort(s);
-		Collections.reverse(s);
-		return s;
-	}
-	
-	/**
-	 * Helper that normalizes the sizes to the proportion of the canvas. 
-	 * 
-	 * @param sizes  A list of values to squarify
-	 * @param width  The canvas width
-	 * @param height The canvas height
-	 * @return
-	 */
-	private ArrayList<Float> normalizeSizes(ArrayList<Float> sizes, float width, float height) {
-		float totalSize = sum(sizes);
-		float totalArea = width * height;
-		ArrayList<Float> normalized = new ArrayList<Float>(sizes.size());
 		
-		for (int i = 0; i < sizes.size(); i++) {
-			normalized.add(sizes.get(i) * totalArea / totalSize);
-		}
-		return normalized;
-	}
-	
-	/**
-	 * Helper that denormalized a normalized size to its original value
-	 * This helper is only needed if you want to print the size in the rectangles on your canvas.
-	 * 
-	 * @param sizes 			The list of sizes to squarify 
-	 * @param normalizedValue   The normalized size to reverse
-	 * @param width  The canvas width
-	 * @param height The canvas height
-	 * @return
-	 */
-	private Float denormalizeSize(ArrayList<Float> sizes, float normalizedValue, float width, float height) {
-		float totalSize = sum(sizes);
-		float totalArea = width * height;
-		return (float) normalizedValue * totalSize / totalArea;
-	}
-	
 	/** 
-	 * Helper that sums all the values of float list
-	 * @param values A list of float values
+	 * Helper that sums all the values of DataPoint
+	 * @param values A list of DataPoint values
 	 * @return The sum of these values
 	 */
-	private float sum(List<Float> values) {
+	private float sumNormalizedValues(List<DataPoint> l) {
 		float result = 0;
-		for (int i = 0; i < values.size(); i++) {
-			result += values.get(i);
+		for (int i = 0; i < l.size(); i++) {
+			result += l.get(i).getNormalizedValue();
 		}
 		return result;
 	}
@@ -105,13 +55,13 @@ public class Squarify {
 	 * @param dy
 	 * @return
 	 */
-	private ArrayList<SquarifiedRect> layoutRow(List<Float> values, float x, float y, float dx, float dy) {
-		float coveredArea = sum(values);
+	private ArrayList<SquarifyRect> layoutRow(List<DataPoint> values, float x, float y, float dx, float dy) {
+		float coveredArea = sumNormalizedValues(values);
 		float width = coveredArea / dy;
-		ArrayList<SquarifiedRect> rects = new ArrayList<SquarifiedRect>();
+		ArrayList<SquarifyRect> rects = new ArrayList<SquarifyRect>();
 		for (int i = 0; i < values.size(); i++) {
-			rects.add(new SquarifiedRect(x, y, width, values.get(i) / width,  denormalizeSize(this.sizes, values.get(i), this.width, this.height)));
-			y += values.get(i) / width;
+			rects.add(new SquarifyRect(x, y, width, values.get(i).getNormalizedValue() / width, values.get(i).getId(), values.get(i).getValue()));
+			y += values.get(i).getNormalizedValue() / width;
 		}
 		return rects;
 	}
@@ -128,13 +78,13 @@ public class Squarify {
 	 * @param dy
 	 * @return
 	 */
-	private ArrayList<SquarifiedRect> layoutCol(List<Float> values, float x, float y, float dx, float dy) {
-		float coveredArea = sum(values);
+	private ArrayList<SquarifyRect> layoutCol(List<DataPoint> values, float x, float y, float dx, float dy) {
+		float coveredArea = sumNormalizedValues(values);
 		float height = coveredArea / dx;
-		ArrayList<SquarifiedRect> rects = new ArrayList<SquarifiedRect>();
+		ArrayList<SquarifyRect> rects = new ArrayList<SquarifyRect>();
 		for (int i = 0; i < values.size(); i++) {
-			rects.add(new SquarifiedRect(x, y, values.get(i) / height, height, denormalizeSize(this.sizes, values.get(i), this.width, this.height)));
-			x += values.get(i) / height;
+			rects.add(new SquarifyRect(x, y, values.get(i).getNormalizedValue() / height, height, values.get(i).getId(), values.get(i).getValue()));
+			x += values.get(i).getNormalizedValue() / height;
 		}
 		return rects;
 	}
@@ -148,14 +98,14 @@ public class Squarify {
 	 * @param dy
 	 * @return
 	 */
-	private SquarifiedRect leftoverRow(List<Float> values, float x, float y, float dx, float dy) {
-		float coveredArea = sum(values);
+	private SquarifyRect leftoverRow(List<DataPoint> values, float x, float y, float dx, float dy) {
+		float coveredArea = sumNormalizedValues(values);
 		float width = coveredArea / dy;
 		float leftoverX = x + width;
 		float leftoverY = y;
 		float leftoverDx = dx - width;
 		float leftoverDy = dy;
-		return new SquarifiedRect(leftoverX, leftoverY, leftoverDx, leftoverDy);
+		return new SquarifyRect(leftoverX, leftoverY, leftoverDx, leftoverDy);
 	}
 	
 	/**
@@ -167,14 +117,14 @@ public class Squarify {
 	 * @param dy
 	 * @return
 	 */
-	private SquarifiedRect leftoverCol(List<Float> values, float x, float y, float dx, float dy) {
-		float coveredArea = sum(values);
+	private SquarifyRect leftoverCol(List<DataPoint> values, float x, float y, float dx, float dy) {
+		float coveredArea = sumNormalizedValues(values);
 		float height = coveredArea / dx;
 		float leftoverX = x;
 		float leftoverY = y + height;
 		float leftoverDx = dx;
 		float leftoverDy = dy - height;
-		return new SquarifiedRect(leftoverX, leftoverY, leftoverDx, leftoverDy);
+		return new SquarifyRect(leftoverX, leftoverY, leftoverDx, leftoverDy);
 	}
 	
 	/**
@@ -186,7 +136,7 @@ public class Squarify {
 	 * @param dy
 	 * @return
 	 */
-	private SquarifiedRect leftover(List<Float> values, float x, float y, float dx, float dy) {
+	private SquarifyRect leftover(List<DataPoint> values, float x, float y, float dx, float dy) {
 		if (dx >= dy) {
 			return leftoverRow(values, x, y, dx, dy);
 		}
@@ -202,7 +152,7 @@ public class Squarify {
 	 * @param dy
 	 * @return
 	 */
-	private ArrayList<SquarifiedRect> layout(List<Float> values, float x, float y, float dx, float dy) {
+	private ArrayList<SquarifyRect> layout(List<DataPoint> values, float x, float y, float dx, float dy) {
 		if (dx >= dy) {
 			return layoutRow(values, x, y, dx, dy);
 		}
@@ -219,8 +169,8 @@ public class Squarify {
 	 * @param dy
 	 * @return
 	 */
-	private float worstRatio(List<Float> values, float x, float y, float dx, float dy) {
-		ArrayList<SquarifiedRect> rects = layout(values, x, y, dx, dy);
+	private float worstRatio(List<DataPoint> values, float x, float y, float dx, float dy) {
+		ArrayList<SquarifyRect> rects = layout(values, x, y, dx, dy);
 		float max = 0;
 		for (int i = 0; i < rects.size(); i++) {
 			float rectDx = rects.get(i).getDx();
@@ -242,15 +192,15 @@ public class Squarify {
 	 * @param dy     Current height of leftover canvas
 	 * @return
 	 */
-	private ArrayList<SquarifiedRect> squarify(List<Float> values, float x, float y, float dx, float dy) {
-		ArrayList<SquarifiedRect> rects = new ArrayList<SquarifiedRect>();
+	private ArrayList<SquarifyRect> squarify(List<DataPoint> values, float x, float y, float dx, float dy) {
+		ArrayList<SquarifyRect> rects = new ArrayList<SquarifyRect>();
 		
 		if (values.size() == 0) {
 	        return rects;
 		}
 		
 		if (values.size() == 1) {
-			rects.add(new SquarifiedRect(x, y, dx, dy, denormalizeSize(this.sizes, values.get(0), this.width, this.height)));
+			rects.add(new SquarifyRect(x, y, dx, dy, values.get(0).getId(), values.get(0).getValue()));
 			return rects;
 		}
 		
@@ -259,10 +209,10 @@ public class Squarify {
 			i += 1;
 		}
 		
-		List<Float> current = values.subList(0, i);
-		List<Float> remaining = values.subList(i, values.size());
+		List<DataPoint> current = values.subList(0, i);
+		List<DataPoint> remaining = values.subList(i, values.size());
 		
-		SquarifiedRect currentLeftover = leftover(current, x, y, dx, dy);
+		SquarifyRect currentLeftover = leftover(current, x, y, dx, dy);
 		rects.addAll(layout(current, x, y, dx, dy));
 		rects.addAll(squarify(remaining, currentLeftover.getX(), currentLeftover.getY(), currentLeftover.getDx(), currentLeftover.getDy()));
 		return rects;
