@@ -44,15 +44,15 @@
 	<property name="project.src" location="src"/>
 	<property name="project.tmp" location="tmp"/>
 	<property name="project.web" location="web"/>
-	<property name="project.data" location="data"/>
-	<property name="project.lib" location="lib"/>
+	<!-- <property name="project.data" location="data"/>
+	<property name="project.lib" location="lib"/> -->
 	<property name="project.bin" location="bin"/>
-	<property name="project.bin.data" location="${project.bin}/data"/>
+	<!--<property name="project.bin.data" location="${project.bin}/data"/>-->
 	<property name="project.examples" location="examples"/>
 	<property name="project.reference" location="reference"/>
 	<property name="project.dist" location="distribution"/>
 	<property name="project.dist.version" location="distribution/${project.name}-${library.version}"/>
-	<property name="install.source" location="resources/README.md"/>
+	<!--<property name="install.source" location="resources/README.md"/>-->
 	<property name="install.destination" location="${project.dist.version}/README.md"/>
 	<property name="libprops.source" location="resources/library.properties"/>
 	
@@ -66,7 +66,7 @@
 	<path id="classpath">
 		<fileset dir="${classpath.local.location}" includes="${classpath.local.include}" />
 		<fileset dir="${classpath.libraries.location}" includes="**/*.jar" />
-		<fileset dir="${project.lib}" includes="**/*.jar" />
+		<!-- <fileset dir="${project.lib}" includes="**/*.jar" /> -->
 	</path>		
 
 	
@@ -144,9 +144,9 @@ ${line}
 			</classpath>
 			<compilerarg value="-Xlint"/>
 		</javac>
-		<copy todir="${project.bin.data}">
+		<!--<copy todir="${project.bin.data}">
 			<fileset dir="${project.data}" excludes="README" />
-		</copy>
+		</copy>-->
 	</target>
 	
 	
@@ -171,9 +171,9 @@ ${line}
   		<copy todir="${project.tmp}/${project.name}/src">
   			<fileset dir="${project.src}"/>
 	  	</copy>
-	  	<copy todir="${project.tmp}/${project.name}/${folder}">
+		<!--<copy todir="${project.tmp}/${project.name}/${folder}">
   			<fileset dir="${project.lib}" excludes="README" />
-	  	</copy>
+	  	</copy>-->
 	</target>
 	
 	
@@ -292,7 +292,7 @@ ${line}
 	
 	
 	<target name="generate.install.library" if="is.normal">	
-		<copy file="${install.source}" tofile="${install.destination}" />
+		<!--<copy file="${install.source}" tofile="${install.destination}" />-->
 		
 		<antcall target="parse.file"><param name="file" value="${install.destination}"/></antcall>
 	</target>	
