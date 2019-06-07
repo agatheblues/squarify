@@ -3,7 +3,7 @@
 Squarify is a Processing library that implements the squarify treemap layout algorithm.
 It divides an area into rectangles whose areas is sized based on a set of values, the rectangles being optimized to be as squary as possible.
 
-This library is a translation in Java of an [original Python algorithm](https://github.com/laserson/squarify) made by [Laserson](https://github.com/laserson). 
+This library is a translation in Java of an [original Python algorithm](https://github.com/laserson/squarify) made by [Laserson](https://github.com/laserson). Based on algorithm from [Bruls, Huizing, van Wijk, "Squarified Treemaps"](https://doi.org/10.1007/978-3-7091-6783-0_4), but implements it differently.
 
 ## Installation
 
